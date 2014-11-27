@@ -2,17 +2,28 @@ module.exports = function(grunt) {
 
   require('load-grunt-tasks')(grunt);
 
-  // Project configuration.
   grunt.initConfig({
     app: 'app',
     dist: 'dist',
+    clean: ['<%= dist %>'],
     copy: {
       my_target: {
         files: [{
             expand: true,
             cwd: '<%= app %>/',
-            src: ['**/*.html', '**/*.css'],
+            src: ['**/*.html'],
             dest: '<%= dist %>/'
+        }]
+      }
+    },
+    cssmin: {
+      my_target: {
+        files: [{
+          expand: true,
+          cwd: '<%= app %>/',
+          src: ['**/*.css'],
+          dest: '<%= dist %>/',
+          ext: '.min.css'
         }]
       }
     },
@@ -28,10 +39,6 @@ module.exports = function(grunt) {
     }
   });
 
-  // Load the plugin that provides the "uglify" task.
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-
-  // Default task(s).
-  grunt.registerTask('default', ['copy', 'uglify']);
+  grunt.registerTask('default', ['clean', 'copy', 'cssmin', 'uglify']);
 
 };
