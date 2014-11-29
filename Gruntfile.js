@@ -6,8 +6,35 @@ module.exports = function(grunt) {
     app: 'app',
     dist: 'dist',
     clean: ['<%= dist %>'],
+    wiredep: {
+      app: {
+        src: ['<%= app %>/index.html']
+      }
+    },
+    useminPrepare: {
+      html: '<%= app %>/index.html',
+      options: {
+        dest: '<%= dist %>',
+        flow: {
+          html: {
+            steps: {
+              js: ['uglifyjs'],
+              css: ['cssmin']
+            },
+            post: {}
+          }
+        }
+      }
+    },
+    usemin: {
+      html: ['<%= dist %>/{,*/}*.html'],
+      css: ['<%= dist %>/styles/{,*/}*.css'],
+      options: {
+        assetsDirs: ['<%= dist %>','<%= dist %>/images']
+      }
+    },
     copy: {
-      my_target: {
+      dist: {
         files: [{
             expand: true,
             cwd: '<%= app %>/',
@@ -15,30 +42,17 @@ module.exports = function(grunt) {
             dest: '<%= dist %>/'
         }]
       }
-    },
-    cssmin: {
-      my_target: {
-        files: [{
-          expand: true,
-          cwd: '<%= app %>/',
-          src: ['**/*.css'],
-          dest: '<%= dist %>/',
-          ext: '.min.css'
-        }]
-      }
-    },
-    uglify: {
-      my_target: {
-        files: [{
-            expand: true,
-            cwd: '<%= app %>/',
-            src: ['**/*.js'],
-            dest: '<%= dist %>/'
-        }]
-      }
     }
   });
 
-  grunt.registerTask('default', ['clean', 'copy', 'cssmin', 'uglify']);
+  grunt.registerTask('default', [
+    'clean',
+    'wiredep',
+    'useminPrepare',
+    'uglify',
+    'cssmin',
+    'copy',
+    'usemin'
+  ]);
 
 };
